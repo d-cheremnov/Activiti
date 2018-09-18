@@ -23,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 @Configuration
 @ComponentScan(basePackages = "org.activiti.spring.connector")
@@ -36,7 +37,7 @@ public class ConnectorAutoConfiguration {
     }
 
     @Bean
-    public ConnectorDefinitionService connectorDefinitionService(@Value("${activiti.connectors.dir:connectors}") String connectorRoot, ObjectMapper objectMapper) {
-        return new ConnectorDefinitionService(connectorRoot, objectMapper);
+    public ConnectorDefinitionService connectorDefinitionService(@Value("${activiti.connectors.dir:classpath:/connectors}") String connectorRoot, ObjectMapper objectMapper, ResourcePatternResolver resourceLoader) {
+        return new ConnectorDefinitionService(connectorRoot, objectMapper, resourceLoader);
     }
 }

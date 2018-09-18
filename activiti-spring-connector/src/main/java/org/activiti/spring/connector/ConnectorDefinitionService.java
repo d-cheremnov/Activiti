@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.model.connector.ConnectorDefinition;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,16 +36,19 @@ public class ConnectorDefinitionService {
 
     private final ObjectMapper objectMapper;
 
-    public ConnectorDefinitionService(String connectorRoot, ObjectMapper objectMapper) {
+    private ResourcePatternResolver resourceLoader;
+
+    public ConnectorDefinitionService(String connectorRoot, ObjectMapper objectMapper, ResourcePatternResolver resourceLoader) {
         this.connectorRoot = connectorRoot;
         this.objectMapper = objectMapper;
+        this.resourceLoader = resourceLoader;
     }
 
     private Optional<File[]> retrieveFiles() throws IOException {
 
         Optional<File[]> connectorFiles = Optional.empty();
 
-        Resource connectorRootPath = new ClassPathResource(connectorRoot);
+        Resource connectorRootPath = resourceLoader.getResource(connectorRoot);
         if (connectorRootPath.exists()) {
             connectorFiles = Optional.ofNullable(connectorRootPath.getFile().listFiles(new FilenameFilter() {
 
