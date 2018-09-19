@@ -18,14 +18,11 @@ package org.activiti.spring.connector;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.activiti.model.connector.ConnectorDefinition;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,37 +41,29 @@ public class ConnectorDefinitionService {
         this.resourceLoader = resourceLoader;
     }
 
-    private Optional<File[]> retrieveFiles() throws IOException {
+    private Optional<Resource[]> retrieveResources() throws IOException {
 
-        Optional<File[]> connectorFiles = Optional.empty();
+        Optional<Resource[]> resources = Optional.empty();
 
         Resource connectorRootPath = resourceLoader.getResource(connectorRoot);
         if (connectorRootPath.exists()) {
-            connectorFiles = Optional.ofNullable(connectorRootPath.getFile().listFiles(new FilenameFilter() {
-
-                                                     @Override
-                                                     public boolean accept(File dir,
-                                                                           String name) {
-                                                         return (name.toLowerCase().endsWith(".json"));
-                                                     }
-                                                 })
-            );
+            return Optional.ofNullable(resourceLoader.getResources(connectorRoot + "**.json"));
         }
-        return connectorFiles;
+        return resources;
     }
 
-    private ConnectorDefinition read(File file) throws IOException {
-        return objectMapper.readValue(file,
+    private ConnectorDefinition read(InputStream inputStream) throws IOException {
+        return objectMapper.readValue(inputStream,
                                       ConnectorDefinition.class);
     }
 
     public List<ConnectorDefinition> get() throws IOException {
 
         List<ConnectorDefinition> connectorDefinitions = new ArrayList<>();
-        Optional<File[]> files = retrieveFiles();
-        if (files.isPresent()) {
-            for (File file : files.get()) {
-                connectorDefinitions.add(read(file));
+        Optional<Resource[]> resourcesOptional = retrieveResources();
+        if (resourcesOptional.isPresent()) {
+            for (Resource resource : resourcesOptional.get()) {
+                connectorDefinitions.add(read(resource.getInputStream()));
             }
         }
         return connectorDefinitions;

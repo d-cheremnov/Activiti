@@ -37,7 +37,7 @@ public class ConnectorAutoConfiguration {
     }
 
     @Bean
-    public ConnectorDefinitionService connectorDefinitionService(@Value("${activiti.connectors.dir:classpath:/connectors}") String connectorRoot, ObjectMapper objectMapper, ResourcePatternResolver resourceLoader) {
+    public ConnectorDefinitionService connectorDefinitionService(@Value("${activiti.connectors.dir:classpath:/connectors/}") String connectorRoot, ObjectMapper objectMapper, ResourcePatternResolver resourceLoader) {
         return new ConnectorDefinitionService(connectorRoot, objectMapper, resourceLoader);
     }
 }
