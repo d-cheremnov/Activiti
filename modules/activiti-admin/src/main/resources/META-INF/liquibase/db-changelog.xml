@@ -217,22 +217,32 @@
                                  referencedTableName="CLUSTER_CONFIG"/>
 
     </changeSet>
-    
+
     <changeSet id="6" author="activiti">
-    
+
         <!-- Allow to link user with cluster config -->
         <addColumn tableName="SERVER_CONFIG">
             <column name="tenant_id" type="varchar(50)" />
         </addColumn>
-    
+
     </changeSet>
-    
+
     <changeSet id="7" author="activiti">
-    
+
         <addColumn tableName="CLUSTER_CONFIG">
             <column name="created_by" type="varchar(50)" />
         </addColumn>
-    
+
     </changeSet>
-    
+
+    <changeSet id="8" author="d.cheremnov">
+
+        <addColumn tableName="SERVER_CONFIG">
+            <column name="iam_url" type="varchar(255)" />
+            <column name="client_secret" type="varchar(50)" />
+        </addColumn>
+
+    </changeSet>
+
+
 </databaseChangeLog>

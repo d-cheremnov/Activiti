@@ -14,7 +14,14 @@ package com.activiti.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cache;
@@ -25,121 +32,143 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ServerConfig implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "serverConfigIdGenerator")
     @TableGenerator(name = "serverConfigIdGenerator", table = "HIBERNATE_SEQUENCES")
-	protected Long id;
+    protected Long id;
 
-	@Column
-	@NotNull
-	protected String name;
+    @Column
+    @NotNull
+    protected String name;
 
-	@Column
-	protected String description;
+    @Column
+    protected String description;
 
-	@Column(name="server_address")
-	@NotNull
-	protected String serverAddress;
+    @Column(name = "server_address")
+    @NotNull
+    protected String serverAddress;
 
-	@Column
-	@NotNull
-	protected Integer port;
+    @Column
+    @NotNull
+    protected Integer port;
 
-	@Column(name="context_root")
-	protected String contextRoot;
+    @Column(name = "context_root")
+    protected String contextRoot;
 
-	@Column(name="rest_root")
-	protected String restRoot;
+    @Column(name = "rest_root")
+    protected String restRoot;
 
-	@Column(name="user_name")
-	@NotNull
-	protected String userName;
+    @Column(name = "user_name")
+    @NotNull
+    protected String userName;
 
-	@Column
-	protected String password;
+    @Column
+    protected String password;
 
-	@Transient
-	@Column(name="cluster_config_id")
-	protected Long clusterConfigId;
+    @Transient
+    @Column(name = "cluster_config_id")
+    protected Long clusterConfigId;
 
-	@Column(name="tenant_id")
-	protected String tenantId;
+    @Column(name = "tenant_id")
+    protected String tenantId;
+
+    @Column(name = "iam_url")
+    protected String iamURL;
+
+    @Column(name = "client_secret")
+    protected String clientSecret;
 
     public Long getId() {
-		return id;
-	}
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getServerAddress() {
-		return serverAddress;
-	}
+    public String getServerAddress() {
+        return serverAddress;
+    }
 
-	public void setServerAddress(String serverAddress) {
-		this.serverAddress = serverAddress;
-	}
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
 
-	public Integer getPort() {
-		return port;
-	}
+    public Integer getPort() {
+        return port;
+    }
 
-	public void setPort(Integer port) {
-		this.port = port;
-	}
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 
-	public String getContextRoot() {
-		return contextRoot;
-	}
+    public String getContextRoot() {
+        return contextRoot;
+    }
 
-	public void setContextRoot(String contextRoot) {
-		this.contextRoot = contextRoot;
-	}
+    public void setContextRoot(String contextRoot) {
+        this.contextRoot = contextRoot;
+    }
 
-	public String getRestRoot() {
-		return restRoot;
-	}
+    public String getRestRoot() {
+        return restRoot;
+    }
 
-	public void setRestRoot(String restRoot) {
-		this.restRoot = restRoot;
-	}
+    public void setRestRoot(String restRoot) {
+        this.restRoot = restRoot;
+    }
 
-	public String getUserName() {
-		return userName;
-	}
+    public String getUserName() {
+        return userName;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	@Override
+    public String getIamURL() {
+        return iamURL;
+    }
+
+    public void setIamURL(String iamURL) {
+        this.iamURL = iamURL;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -162,12 +191,14 @@ public class ServerConfig implements Serializable {
         return id.hashCode();
     }
 
-	@Override
-	public String toString() {
-		return "ServerConfig [id=" + id + ", name=" + name + ", description="
-				+ description + ", serverAddress=" + serverAddress + ", port="
-				+ port + ", contextRoot=" + contextRoot + ", restRoot="
-				+ restRoot + ", userName=" + userName + ", password="
-				+ password + "]";
-	}
+    @Override
+    public String toString() {
+        return "ServerConfig [id=" + id + ", name=" + name + ", description="
+            + description + ", serverAddress=" + serverAddress + ", port="
+            + port + ", contextRoot=" + contextRoot + ", restRoot="
+            + restRoot + ", iamURL=" + iamURL + ", clientSecret="
+            + clientSecret + ", userName=" + userName + ", password="
+            + password
+            + "]";
+    }
 }

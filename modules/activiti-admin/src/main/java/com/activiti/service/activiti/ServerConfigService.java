@@ -12,17 +12,17 @@
  */
 package com.activiti.service.activiti;
 
-import com.activiti.domain.ServerConfig;
-import com.activiti.repository.ServerConfigRepository;
-import com.activiti.web.rest.dto.ServerConfigRepresentation;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.activiti.domain.ServerConfig;
+import com.activiti.repository.ServerConfigRepository;
+import com.activiti.web.rest.dto.ServerConfigRepresentation;
 
 /**
  * @author jbarrez
@@ -39,23 +39,27 @@ public class ServerConfigService extends AbstractEncryptingService {
     private static final String REST_APP_REST_ROOT = "rest.app.restroot";
     private static final String REST_APP_USER = "rest.app.user";
     private static final String REST_APP_PASSWORD = "rest.app.password";
+    private static final String OAUTH2_IAM_URL = "oauth2.iam.url";
+    private static final String OAUTH2_CLIENT_SECRET = "oauth2.client.secret";
 
     @Autowired
     protected Environment environment;
 
-	@Autowired
-	protected ServerConfigRepository serverConfigRepository;
+    @Autowired
+    protected ServerConfigRepository serverConfigRepository;
 
-	@Transactional
-	public void createDefaultServerConfig() {
+    @Transactional
+    public void createDefaultServerConfig() {
 
         ServerConfig serverConfig = getDefaultServerConfig();
 
         serverConfig.setUserName(environment.getRequiredProperty(REST_APP_USER));
         serverConfig.setPassword(environment.getRequiredProperty(REST_APP_PASSWORD));
+        serverConfig.setIamURL(environment.getRequiredProperty(OAUTH2_IAM_URL));
+        serverConfig.setClientSecret(environment.getRequiredProperty(OAUTH2_CLIENT_SECRET));
 
-		save(serverConfig, true);
-	}
+        save(serverConfig, true);
+    }
 
     @Transactional
     public ServerConfig findOne(Long id) {
@@ -74,19 +78,19 @@ public class ServerConfigService extends AbstractEncryptingService {
         }
         serverConfigRepository.save(serverConfig);
     }
-    
+
     public String getServerConfigDecryptedPassword(ServerConfig serverConfig) {
         return decrypt(serverConfig.getPassword());
     }
 
     protected List<ServerConfigRepresentation> createServerConfigRepresentation(List<ServerConfig> serverConfigs) {
         List<ServerConfigRepresentation> serversRepresentations = new ArrayList<ServerConfigRepresentation>();
-        for (ServerConfig serverConfig: serverConfigs) {
+        for (ServerConfig serverConfig : serverConfigs) {
             serversRepresentations.add(createServerConfigRepresentation(serverConfig));
         }
         return serversRepresentations;
     }
-    
+
     protected ServerConfigRepresentation createServerConfigRepresentation(ServerConfig serverConfig) {
         ServerConfigRepresentation serverRepresentation = new ServerConfigRepresentation();
         serverRepresentation.setId(serverConfig.getId());
@@ -111,6 +115,5 @@ public class ServerConfigService extends AbstractEncryptingService {
         serverConfig.setRestRoot(environment.getRequiredProperty(REST_APP_REST_ROOT));
 
         return serverConfig;
-
     }
 }
