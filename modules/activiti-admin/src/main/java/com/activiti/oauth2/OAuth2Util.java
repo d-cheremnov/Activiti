@@ -76,7 +76,7 @@ public class OAuth2Util {
             tokens.put(credentials, accessTokenResult);
         }
 
-        log.info("getAccessToken, created iamUrl: {}, clientSecret: {}, accessToken: {}", iamUrl, clientSecret, accessToken);
-        return accessToken;
+        log.info("getAccessToken, created iamUrl: {}, clientSecret: {}, accessToken: {}", iamUrl, clientSecret, accessTokenResult);
+        return accessTokenResult;
     }
 }
