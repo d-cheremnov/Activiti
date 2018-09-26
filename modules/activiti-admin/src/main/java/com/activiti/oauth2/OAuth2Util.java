@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class OAuth2Util {
 
+    public static final String BEARER_PREFIX = "Bearer ";
+
     private final static Logger log = LoggerFactory.getLogger(OAuth2Util.class);
 
     private static final String UTF_8 = "UTF-8";
@@ -31,10 +33,9 @@ public class OAuth2Util {
     }
 
     public static OAuth2AccessToken getAccessToken(String iamUrl, String clientSecret, OAuth2Credentials credentials) throws Exception {
-        log.info("Start getAccessToken, iamUrl: {}, clientSecret: {}, accessToken: {}", iamUrl, clientSecret);
-
         OAuth2AccessToken accessToken = tokens.get(credentials);
         if (accessToken != null && !accessToken.isExpired()) {
+            log.info("getAccessToken, found iamUrl: {}, clientSecret: {}, accessToken: {}", iamUrl, clientSecret, accessToken);
             return accessToken;
         }
 
@@ -75,7 +76,7 @@ public class OAuth2Util {
             tokens.put(credentials, accessTokenResult);
         }
 
-        log.info("getAccessToken, iamUrl: {}, clientSecret: {}, accessToken: {}", iamUrl, clientSecret, accessToken);
+        log.info("getAccessToken, created iamUrl: {}, clientSecret: {}, accessToken: {}", iamUrl, clientSecret, accessToken);
         return accessToken;
     }
 }

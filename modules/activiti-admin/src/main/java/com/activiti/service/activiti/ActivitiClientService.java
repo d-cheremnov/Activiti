@@ -12,6 +12,9 @@
  */
 package com.activiti.service.activiti;
 
+import static com.activiti.oauth2.OAuth2Util.BEARER_PREFIX;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -20,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthSchemeProvider;
 import org.apache.http.auth.AuthScope;
@@ -44,14 +48,18 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.activiti.domain.ServerConfig;
+import com.activiti.oauth2.OAuth2AccessToken;
+import com.activiti.oauth2.OAuth2Credentials;
 import com.activiti.oauth2.OAuth2Scheme;
 import com.activiti.oauth2.OAuth2SchemeFactory;
+import com.activiti.oauth2.OAuth2Util;
 import com.activiti.service.AttachmentResponseInfo;
 import com.activiti.service.ResponseInfo;
 import com.activiti.service.activiti.exception.ActivitiServiceException;
@@ -139,6 +147,18 @@ public class ActivitiClientService {
         return executeRequest(request, null, null, userName, password, HttpStatus.SC_OK);
     }
 
+    private void addAuthHeader(HttpUriRequest request, String iamUrl, String clientSecret, String userName, String password) {
+        try {
+            OAuth2AccessToken accessToken =
+                OAuth2Util.getAccessToken(iamUrl, clientSecret, new OAuth2Credentials(userName, password));
+            String authHeader = BEARER_PREFIX + accessToken.getAccessToken();
+            Header header = new BasicHeader(AUTHORIZATION, authHeader);
+            request.addHeader(header);
+        } catch (Exception e) {
+            log.error("Failed addAuthHeader", e);
+        }
+    }
+
     /**
      * Execute the given request. Will return the parsed JSON present in the response-body, in case the status code is as expected.
      * In case the response returns a different status-code, an {@link ActivitiServiceException} is thrown with the error message received
@@ -148,6 +168,9 @@ public class ActivitiClientService {
 
         ActivitiServiceException exception = null;
         CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
+
+        addAuthHeader(request, iamUrl, clientSecret, userName, password);
+
         try {
             CloseableHttpResponse response = client.execute(request);
 
@@ -203,9 +226,11 @@ public class ActivitiClientService {
 
     public JsonNode executeDownloadRequest(HttpUriRequest request, HttpServletResponse httpResponse, String iamUrl, String clientSecret,
         String userName, String password, int expectedStatusCode) {
-
         ActivitiServiceException exception = null;
         CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
+
+        addAuthHeader(request, iamUrl, clientSecret, userName, password);
+
         try {
             CloseableHttpResponse response = client.execute(request);
             try {
@@ -265,6 +290,9 @@ public class ActivitiClientService {
         String userName, String password, Integer... expectedStatusCodes) {
         ActivitiServiceException exception = null;
         CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
+
+        addAuthHeader(request, iamUrl, clientSecret, userName, password);
+
         try {
             CloseableHttpResponse response = client.execute(request);
 
@@ -323,6 +351,9 @@ public class ActivitiClientService {
 
         ActivitiServiceException exception = null;
         CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
+
+        addAuthHeader(request, iamUrl, clientSecret, userName, password);
+
         try {
             CloseableHttpResponse response = client.execute(request);
 
@@ -374,6 +405,9 @@ public class ActivitiClientService {
 
         ActivitiServiceException exception = null;
         CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
+
+        addAuthHeader(request, iamUrl, clientSecret, userName, password);
+
         try {
             CloseableHttpResponse response = client.execute(request);
 
@@ -414,6 +448,10 @@ public class ActivitiClientService {
         ActivitiServiceException exception = null;
         String result = null;
         CloseableHttpClient client = getHttpClient(serverConfig);
+
+        addAuthHeader(request, serverConfig.getIamURL(), serverConfig.getClientSecret(),
+            serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()));
+
         try {
             CloseableHttpResponse response = client.execute(request);
             boolean success = response.getStatusLine() != null && response.getStatusLine().getStatusCode() == expectedStatusCode;
@@ -475,6 +513,9 @@ public class ActivitiClientService {
     public void executeRequestNoResponseBody(HttpUriRequest request, ServerConfig serverConfig, int expectedStatusCode) {
 
         ActivitiServiceException exception = null;
+
+        addAuthHeader(request, serverConfig.getIamURL(), serverConfig.getClientSecret(),
+            serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()));
 
         CloseableHttpClient client = getHttpClient(serverConfig);
         try {
