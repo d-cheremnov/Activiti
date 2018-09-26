@@ -45,6 +45,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,10 +108,11 @@ public class ActivitiClientService {
             .setAuthenticationEnabled(true)
             .setProxyPreferredAuthSchemes(authSchemes)
             .setTargetPreferredAuthSchemes(authSchemes).build();
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create()
+
+        HttpClientBuilder httpClientBuilder = HttpClients.custom()
             .setDefaultAuthSchemeRegistry(registry)
-            .setDefaultRequestConfig(requestConfig);
-        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+            .setDefaultRequestConfig(requestConfig)
+            .setDefaultCredentialsProvider(credentialsProvider);
 
         if (sslsf != null) {
             httpClientBuilder.setSSLSocketFactory(sslsf);
