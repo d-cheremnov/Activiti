@@ -144,6 +144,7 @@ public class ActivitiClientService {
     }
 
     public JsonNode executeRequest(HttpUriRequest request, String userName, String password) {
+        log.info("executeRequest, null iamUrl, clientSecret, userName: {}, password: {}", userName, password);
         return executeRequest(request, null, null, userName, password, HttpStatus.SC_OK);
     }
 
@@ -155,7 +156,7 @@ public class ActivitiClientService {
             Header header = new BasicHeader(AUTHORIZATION, authHeader);
             request.addHeader(header);
         } catch (Exception e) {
-            log.error("Failed addAuthHeader", e);
+            log.error("Failed addAuthHeader, iamUrl: {}, clientSecret: {}, userName: {}, password: {}", iamUrl, clientSecret, userName, password);
         }
     }
 
@@ -283,6 +284,7 @@ public class ActivitiClientService {
     }
 
     public AttachmentResponseInfo executeDownloadRequest(HttpUriRequest request, String userName, String password) {
+        log.info("executeDownloadRequest, null iamUrl, clientSecret, userName: {}, password: {}", userName, password);
         return executeDownloadRequest(request, null, null, userName, password, HttpStatus.SC_OK);
     }
 
