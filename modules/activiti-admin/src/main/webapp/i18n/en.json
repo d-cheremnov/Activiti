@@ -564,6 +564,7 @@
         "ENDPOINT-CONTEXT-ROOT": "Context root:",
         "ENDPOINT-REST-ROOT": "REST root:",
         "ENDPOINT-USERNAME": "Username:",
+        "ENDPOINT-IAM-URL": "IAM URL:",
         "PROCESS-ENGINE-HELP": "This section allows you to define a 'master configuration' for the cluster. All instances in the cluster will use this configuration when they boot up (if the cluster config jar is on the classpath or if the corresponding properties are set). If not set, the instances will use their local configuration files.",
         "NO-MASTER-DEFINED": "No master configuration defined",
         "ACTION": {
@@ -592,6 +593,8 @@
                 "ENDPOINT-REST-ROOT": "REST root",
                 "ENDPOINT-USERNAME": "Username",
                 "ENDPOINT-PASSWORD": "Password",
+                "ENDPOINT-IAM-URL": "IAM URL:",
+                "ENDPOINT-CLIENT-SECRET": "Client Secret:",
                 "ENDPOINT-PASSWORD-HELP": "Leave blank to keep current password",
                 "ENDPOINT-URL-PREVIEW": "URL preview",
                 "ACTION-CONFIRM": "Save endpoint configuration",
