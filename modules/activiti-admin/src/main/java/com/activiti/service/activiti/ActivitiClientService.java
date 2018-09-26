@@ -14,9 +14,7 @@ package com.activiti.service.activiti;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,6 +72,8 @@ public class ActivitiClientService {
     public static final String DEFAULT_ACTIVITI_CONTEXT_ROOT = "activiti-rest";
     public static final String DEFAULT_ACTIVITI_REST_ROOT = "service";
 
+    private static final int DEFAULT_CONNECTION_TIMEOUT = 60 * 60 * 1000; // 1 hour
+
     @Autowired
     protected ServerConfigService serverConfigService;
 
@@ -87,12 +87,6 @@ public class ActivitiClientService {
 
     public CloseableHttpClient getHttpClient(String iamUrl, String clientSecret, String userName, String password) {
 
-        OAuth2SchemeFactory schemeFactory = new OAuth2SchemeFactory(iamUrl, clientSecret);
-        Lookup<AuthSchemeProvider> registry = RegistryBuilder.<AuthSchemeProvider>create().register(OAuth2Scheme.NAME, schemeFactory).build();
-
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userName, password));
-
         SSLConnectionSocketFactory sslsf = null;
         try {
             SSLContextBuilder builder = new SSLContextBuilder();
@@ -102,16 +96,21 @@ public class ActivitiClientService {
             log.warn("Could not configure HTTP client to use SSL", e);
         }
 
-        List<String> authSchemes = new ArrayList<String>();
-        authSchemes.add(OAuth2Scheme.NAME);
         RequestConfig requestConfig = RequestConfig.custom()
             .setAuthenticationEnabled(true)
-            .setProxyPreferredAuthSchemes(authSchemes)
-            .setTargetPreferredAuthSchemes(authSchemes).build();
+            .setTargetPreferredAuthSchemes(Arrays.asList(OAuth2Scheme.NAME))
+            .setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT)
+            .setSocketTimeout(DEFAULT_CONNECTION_TIMEOUT).build();
+
+        OAuth2SchemeFactory schemeFactory = new OAuth2SchemeFactory(iamUrl, clientSecret);
+        Lookup<AuthSchemeProvider> registry = RegistryBuilder.<AuthSchemeProvider>create().register(OAuth2Scheme.NAME, schemeFactory).build();
+
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(userName, password));
 
         HttpClientBuilder httpClientBuilder = HttpClients.custom()
-            .setDefaultAuthSchemeRegistry(registry)
             .setDefaultRequestConfig(requestConfig)
+            .setDefaultAuthSchemeRegistry(registry)
             .setDefaultCredentialsProvider(credentialsProvider);
 
         if (sslsf != null) {
