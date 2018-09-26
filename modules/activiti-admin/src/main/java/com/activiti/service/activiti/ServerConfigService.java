@@ -55,8 +55,6 @@ public class ServerConfigService extends AbstractEncryptingService {
 
         serverConfig.setUserName(environment.getRequiredProperty(REST_APP_USER));
         serverConfig.setPassword(environment.getRequiredProperty(REST_APP_PASSWORD));
-        serverConfig.setIamURL(environment.getRequiredProperty(OAUTH2_IAM_URL));
-        serverConfig.setClientSecret(environment.getRequiredProperty(OAUTH2_CLIENT_SECRET));
 
         save(serverConfig, true);
     }
@@ -101,6 +99,8 @@ public class ServerConfigService extends AbstractEncryptingService {
         serverRepresentation.setContextRoot(serverConfig.getContextRoot());
         serverRepresentation.setRestRoot(serverConfig.getRestRoot());
         serverRepresentation.setUserName(serverConfig.getUserName());
+        serverRepresentation.setIamURL(serverConfig.getIamURL());
+        serverRepresentation.setClientSecret(serverConfig.getClientSecret());
         return serverRepresentation;
     }
 
@@ -113,6 +113,8 @@ public class ServerConfigService extends AbstractEncryptingService {
         serverConfig.setPort(environment.getRequiredProperty(REST_APP_PORT, Integer.class));
         serverConfig.setContextRoot(environment.getRequiredProperty(REST_APP_CONTEXT_ROOT));
         serverConfig.setRestRoot(environment.getRequiredProperty(REST_APP_REST_ROOT));
+        serverConfig.setIamURL(environment.getRequiredProperty(OAUTH2_IAM_URL));
+        serverConfig.setClientSecret(environment.getRequiredProperty(OAUTH2_CLIENT_SECRET));
 
         return serverConfig;
     }

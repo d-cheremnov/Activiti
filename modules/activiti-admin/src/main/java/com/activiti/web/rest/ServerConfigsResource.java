@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,48 +43,49 @@ import com.activiti.web.rest.exception.BadRequestException;
 @RestController
 public class ServerConfigsResource {
 
-	@Autowired
-	private ServerConfigService serverConfigService;
+    @Autowired
+    private ServerConfigService serverConfigService;
 
     @Autowired
     private AppVersionClientService appVersionClientService;
 
     @Autowired
     private EndpointUserProfileService endpointUserProfileService;
-    
+
     @Autowired
     protected Environment env;
 
-	@RequestMapping(value = "/rest/server-configs", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody List<ServerConfigRepresentation> getServers() {
+    @RequestMapping(value = "/rest/server-configs", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody
+    List<ServerConfigRepresentation> getServers() {
         return serverConfigService.findAll();
-	}
+    }
 
     @RequestMapping(value = "/rest/server-configs/default", method = RequestMethod.GET, produces = "application/json")
     @ResponseStatus(value = HttpStatus.OK)
     public ServerConfigRepresentation getDefaultServerConfig() {
-	    return new ServerConfigRepresentation(serverConfigService.getDefaultServerConfig());
-	}
+        return new ServerConfigRepresentation(serverConfigService.getDefaultServerConfig());
+    }
 
-	@RequestMapping(value = "/rest/server-configs/{serverId}", method = RequestMethod.PUT, produces = "application/json")
-	@ResponseStatus(value = HttpStatus.OK)
-	public void updateServer(@PathVariable Long serverId, @RequestBody ServerConfigRepresentation configRepresentation) {
+    @RequestMapping(value = "/rest/server-configs/{serverId}", method = RequestMethod.PUT, produces = "application/json")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void updateServer(@PathVariable Long serverId, @RequestBody ServerConfigRepresentation configRepresentation) {
 
-	    ServerConfig config = serverConfigService.findOne(serverId);
-	    
-	    if (config == null) {
-	        throw new BadRequestException("Server with id '" + serverId
-                    + "' does not exist");
-	    }
-	    
-	    boolean updatePassword = false;
-	    if (StringUtils.isNotEmpty(configRepresentation.getPassword())) {
-	        config.setPassword(configRepresentation.getPassword());
-	        updatePassword = true;
-	    } else {
-	        configRepresentation.setPassword(serverConfigService.getServerConfigDecryptedPassword(config));
-	    }
-		
+        ServerConfig config = serverConfigService.findOne(serverId);
+
+        if (config == null) {
+            throw new BadRequestException("Server with id '" + serverId
+                + "' does not exist");
+        }
+
+        boolean updatePassword = false;
+        if (StringUtils.isNotEmpty(configRepresentation.getPassword())) {
+            config.setPassword(configRepresentation.getPassword());
+            updatePassword = true;
+        } else {
+            configRepresentation.setPassword(serverConfigService.getServerConfigDecryptedPassword(config));
+        }
+
         config.setContextRoot(configRepresentation.getContextRoot());
         config.setDescription(configRepresentation.getDescription());
         config.setName(configRepresentation.getName());
@@ -93,11 +93,13 @@ public class ServerConfigsResource {
         config.setRestRoot(configRepresentation.getRestRoot());
         config.setServerAddress(configRepresentation.getServerAddress());
         config.setUserName(configRepresentation.getUserName());
+        config.setIamURL(configRepresentation.getIamURL());
+        config.setClientSecret(configRepresentation.getClientSecret());
 
         serverConfigService.save(config, updatePassword);
-	}
-	
-	protected ServerConfigRepresentation createServerConfigRepresentation(ServerConfig serverConfig) {
+    }
+
+    protected ServerConfigRepresentation createServerConfigRepresentation(ServerConfig serverConfig) {
         ServerConfigRepresentation serverRepresentation = new ServerConfigRepresentation();
         serverRepresentation.setId(serverConfig.getId());
         serverRepresentation.setName(serverConfig.getName());
@@ -107,6 +109,8 @@ public class ServerConfigsResource {
         serverRepresentation.setContextRoot(serverConfig.getContextRoot());
         serverRepresentation.setRestRoot(serverConfig.getRestRoot());
         serverRepresentation.setUserName(serverConfig.getUserName());
+        serverRepresentation.setIamURL(serverConfig.getIamURL());
+        serverRepresentation.setClientSecret(serverConfig.getClientSecret());
         return serverRepresentation;
     }
 }
