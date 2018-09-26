@@ -196,13 +196,15 @@ public class ActivitiClientService {
     }
 
     public JsonNode executeDownloadRequest(HttpUriRequest request, HttpServletResponse httpResponse, ServerConfig serverConfig, int expectedStatusCode) {
-        return executeDownloadRequest(request, httpResponse, serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()), expectedStatusCode);
+        return executeDownloadRequest(request, httpResponse, serverConfig.getIamURL(), serverConfig.getClientSecret(),
+            serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()), expectedStatusCode);
     }
 
-    public JsonNode executeDownloadRequest(HttpUriRequest request, HttpServletResponse httpResponse, String userName, String password, int expectedStatusCode) {
+    public JsonNode executeDownloadRequest(HttpUriRequest request, HttpServletResponse httpResponse, String iamUrl, String clientSecret,
+        String userName, String password, int expectedStatusCode) {
 
         ActivitiServiceException exception = null;
-        CloseableHttpClient client = getHttpClient(null, null, userName, password);
+        CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
         try {
             CloseableHttpResponse response = client.execute(request);
             try {
@@ -250,16 +252,18 @@ public class ActivitiClientService {
     }
 
     public AttachmentResponseInfo executeDownloadRequest(HttpUriRequest request, ServerConfig serverConfig, Integer... expectedStatusCodes) {
-        return executeDownloadRequest(request, serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()), expectedStatusCodes);
+        return executeDownloadRequest(request, serverConfig.getIamURL(), serverConfig.getClientSecret(),
+            serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()), expectedStatusCodes);
     }
 
     public AttachmentResponseInfo executeDownloadRequest(HttpUriRequest request, String userName, String password) {
-        return executeDownloadRequest(request, userName, password, HttpStatus.SC_OK);
+        return executeDownloadRequest(request, null, null, userName, password, HttpStatus.SC_OK);
     }
 
-    public AttachmentResponseInfo executeDownloadRequest(HttpUriRequest request, String userName, String password, Integer... expectedStatusCodes) {
+    public AttachmentResponseInfo executeDownloadRequest(HttpUriRequest request, String iamUrl, String clientSecret,
+        String userName, String password, Integer... expectedStatusCodes) {
         ActivitiServiceException exception = null;
-        CloseableHttpClient client = getHttpClient(null, null, userName, password);
+        CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
         try {
             CloseableHttpResponse response = client.execute(request);
 
@@ -309,13 +313,15 @@ public class ActivitiClientService {
     }
 
     public ResponseInfo execute(HttpUriRequest request, ServerConfig serverConfig, int... expectedStatusCodes) {
-        return execute(request, serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()), expectedStatusCodes);
+        return execute(request, serverConfig.getIamURL(), serverConfig.getClientSecret(),
+            serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()), expectedStatusCodes);
     }
 
-    public ResponseInfo execute(HttpUriRequest request, String userName, String password, int... expectedStatusCodes) {
+    public ResponseInfo execute(HttpUriRequest request, String iamUrl, String clientSecret,
+        String userName, String password, int... expectedStatusCodes) {
 
         ActivitiServiceException exception = null;
-        CloseableHttpClient client = getHttpClient(null, null, userName, password);
+        CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
         try {
             CloseableHttpResponse response = client.execute(request);
 
@@ -358,13 +364,15 @@ public class ActivitiClientService {
     }
 
     public void execute(HttpUriRequest request, HttpServletResponse httpResponse, ServerConfig serverConfig) {
-        execute(request, httpResponse, serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()));
+        execute(request, httpResponse, serverConfig.getIamURL(), serverConfig.getClientSecret(),
+            serverConfig.getUserName(), serverConfigService.decrypt(serverConfig.getPassword()));
     }
 
-    public void execute(HttpUriRequest request, HttpServletResponse httpResponse, String userName, String password) {
+    public void execute(HttpUriRequest request, HttpServletResponse httpResponse, String iamUrl, String clientSecret,
+        String userName, String password) {
 
         ActivitiServiceException exception = null;
-        CloseableHttpClient client = getHttpClient(null, null, userName, password);
+        CloseableHttpClient client = getHttpClient(iamUrl, clientSecret, userName, password);
         try {
             CloseableHttpResponse response = client.execute(request);
 
