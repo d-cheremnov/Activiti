@@ -1,0 +1,10 @@
+{
+    "realm": "VCADC",
+    "auth-server-url": "http://localhost:8080/auth",
+    "ssl-required": "external",
+    "resource": "vca-activitiadmin-backend",
+    "credentials": {
+        "secret": "340d3447-1688-413a-93c3-f0f968e9f02f"
+    },
+    "confidential-port": 0
+}

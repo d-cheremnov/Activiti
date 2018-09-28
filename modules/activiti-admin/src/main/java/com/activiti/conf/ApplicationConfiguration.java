@@ -12,23 +12,31 @@
  */
 package com.activiti.conf;
 
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+
+import com.activiti.oauth2.OAuth2SecurityConfig;
 
 @Configuration
 @PropertySources({
-	@PropertySource(value = "classpath:/META-INF/activiti-admin/activiti-admin.properties"),
-	@PropertySource(value = "classpath:activiti-admin.properties", ignoreResourceNotFound = true),
-	@PropertySource(value = "file:activiti-admin.properties", ignoreResourceNotFound = true)
+    @PropertySource(value = "classpath:/META-INF/activiti-admin/activiti-admin.properties"),
+    @PropertySource(value = "classpath:activiti-admin.properties", ignoreResourceNotFound = true),
+    @PropertySource(value = "file:activiti-admin.properties", ignoreResourceNotFound = true)
 })
 @ComponentScan(basePackages = {
         "com.activiti.service",
-        "com.activiti.security"})
+        "com.activiti.security",
+        "com.activiti.oauth2"})
 @Import(value = {
-        SecurityConfiguration.class,
-        AsyncConfiguration.class,
-        DatabaseConfiguration.class,
-        JacksonConfiguration.class})
+    SecurityConfiguration.class,
+    AsyncConfiguration.class,
+    DatabaseConfiguration.class,
+    JacksonConfiguration.class })
 public class ApplicationConfiguration {
 
     /**
@@ -41,5 +49,4 @@ public class ApplicationConfiguration {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
-
 }

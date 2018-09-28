@@ -15,7 +15,6 @@ package com.activiti.conf;
 import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -26,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
 /**
@@ -50,7 +48,6 @@ public class WebConfigurer implements ServletContextListener {
         EnumSet<DispatcherType> disps = EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD, DispatcherType.ASYNC);
 
         initSpring(servletContext, rootContext);
-        initSpringSecurity(servletContext, disps);
 
         log.debug("Web application fully configured");
     }
@@ -80,17 +77,6 @@ public class WebConfigurer implements ServletContextListener {
         apiDispatcherServlet.addMapping("/api/*");
         apiDispatcherServlet.setLoadOnStartup(1);
         apiDispatcherServlet.setAsyncSupported(true);
-    }
-
-    /**
-     * Initializes Spring Security.
-     */
-    private void initSpringSecurity(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-        log.debug("Registering Spring Security Filter");
-        FilterRegistration.Dynamic springSecurityFilter = servletContext.addFilter("springSecurityFilterChain", new DelegatingFilterProxy());
-
-        springSecurityFilter.addMappingForUrlPatterns(disps, false, "/*");
-        springSecurityFilter.setAsyncSupported(true);
     }
 
     @Override

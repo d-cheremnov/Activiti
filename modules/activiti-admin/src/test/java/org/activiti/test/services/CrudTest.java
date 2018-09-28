@@ -6,22 +6,23 @@
  */
 package org.activiti.test.services;
 
-import com.activiti.domain.User;
-import com.activiti.repository.ServerConfigRepository;
-import com.activiti.repository.UserRepository;
-import com.activiti.service.UserService;
-import com.activiti.service.activiti.ServerConfigService;
+import java.util.List;
 
 import org.activiti.test.ApplicationTestConfiguration;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.List;
+import com.activiti.domain.User;
+import com.activiti.repository.ServerConfigRepository;
+import com.activiti.repository.UserRepository;
+import com.activiti.service.UserService;
+import com.activiti.service.activiti.ServerConfigService;
 
 /**
  * A test that does some CRUD operations to verify database is allright.
@@ -51,6 +52,7 @@ public class CrudTest {
         userRepository.deleteAll();
     }
 
+    @Ignore("VCA disabled")
     @Test
     public void testCreateUser() {
         userService.createAdminUser("jos", "jos", "Jos", "Jossen", "jos@alfresco.com");
@@ -90,5 +92,4 @@ public class CrudTest {
 //        Assert.assertNotEquals("admin", serverConfig.getPassword()); // Password should be encrypted!
 //
 //    }
-
 }

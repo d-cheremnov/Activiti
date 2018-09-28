@@ -15,9 +15,14 @@ var activitiAdminApp = angular.module('activitiAdminApp', ['http-auth-intercepto
 var authRouteResolver = ['$rootScope', 'AuthenticationSharedService', function($rootScope, AuthenticationSharedService) {
 
   if(!$rootScope.authenticated) {
-    // Return auth-promise. On success, the promise resolves and user is assumed authenticated from now on. If
-    // promise is rejected, route will not be followed (no unneeded HTTP-calls will be dne, which case a 401 in the end, anyway)
-    return AuthenticationSharedService.authenticate();
+      var keycloak = Keycloak('keycloak/keycloak.json');
+        keycloak.init().then(function(authenticated) {
+            alert(authenticated ? 'authenticated' : 'not authenticated');
+            return true;
+        }).catch(function() {
+            alert('failed to initialize');
+            return false;
+        });
   } else {
     // Authentication done on rootscope, no need to call service again. Any unauthenticated access to REST will result in
     // a 401 and will redirect to login anyway. Done to prevent additional call to authenticate every route-change
@@ -294,9 +299,9 @@ activitiAdminApp
 	                       $rootScope.authenticated = false;
 	                       $location.path('/login');
 	                   });
-	                   
+
 	               }
-	               
+
 	            });
 
 	            // Call when the user logs in
@@ -312,13 +317,13 @@ activitiAdminApp
 	                          // Show default page
 	                          $location.path('engine');
 	                        }
-	                        
+
 	                       }, function () {
 	                           $rootScope.authenticated = false;
 	                           $location.path('/login');
 	                       });
 	                }
-	                
+
 	            });
 
 	            // Call when the user logs out
